@@ -72,8 +72,8 @@ export function ServiceComponent(props: object) {
                 let svc = svcData[0];
 
                 setService(svc);
-                setRepo('https://' + svc['Service.hasRepo'][0]['Repository.uri']);
-                setTeam(svc['Service.owner']);
+                setRepo(<a href={'https://' + svc['Service.hasRepo'][0]['Repository.uri']} target='_blank' rel="noopener noreferrer">{svc['Service.hasRepo'][0]['Repository.uri']}</a>);
+                setTeam(<Link to={"/kaluzagraph/team/" + svc['Service.owner']['Team.name']}>{toTitle(svc['Service.owner']['Team.name'])}</Link>);
             })
             .catch(error => {
                 console.log(error);
@@ -96,7 +96,7 @@ export function ServiceComponent(props: object) {
                     <Grid item >
                         <Typography variant='body1'>
                             <p>
-                                Repo: <a href={repo} target="_blank">{repo}</a>
+                                Repo: {repo}
                             </p>
 
                             <p>
