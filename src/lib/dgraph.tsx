@@ -52,10 +52,16 @@ const queries = {
 
         Service.readsFrom {
             Queue.topic
+            Queue.writer {
+                Service.name
+            }
         }
 
         Service.writesTo {
             Queue.topic
+            Queue.reader {
+                Service.name
+            }
         }
 
         Service.storesIn {

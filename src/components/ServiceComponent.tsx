@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
+
 import {
     Typography,
     Grid,
     CircularProgress,
 } from '@material-ui/core';
+
+import GitHubIcon from '@mui/icons-material/GitHub';
+import GroupIcon from '@mui/icons-material/Group';
+import BookIcon from '@mui/icons-material/Book';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import {
     InfoCard,
@@ -24,6 +33,11 @@ import {
 } from '../lib/dgraph';
 
 import Error from './Error';
+import {
+    Relationships,
+} from './Graph';
+
+import styles from './ServiceComponent.module.css';
 
 function toTitle(s: string): string {
     if (!s || s === '') {
@@ -35,26 +49,73 @@ function toTitle(s: string): string {
             .join(' ');
 }
 
-function toStr(o: object): string {
-    let seen = [];
+function monitoringIcon(t: string) {
+    switch (t) {
+        case 'RUNBOOK':
+            return <BookIcon className={styles.icons} />;
+        case 'ALERTING':
+            return <NotificationsIcon className={styles.icons} />;
+        case 'LOGGING':
+            return <ManageSearchIcon className={styles.icons} />;
+        case 'DASHBOARD':
+            return <DashboardIcon className={styles.icons} />
+    }
 
-    return JSON.stringify(o, function(key, val) {
-        if (val != null && typeof val == "object") {
-            if (seen.indexOf(val) >= 0) {
-                return;
-            }
-            seen.push(val);
-        }
-        return val;
-    }, 2);
+    return <QuestionMarkIcon className={styles.icons} />;
+}
+
+function Team(props: object) {
+    return (
+        <div className={styles.lineItem}>
+            <GroupIcon className={styles.icons} />
+            <Link to={"/kaluzagraph/team/" + props.team}>
+                {toTitle(props.team)}
+            </Link>
+
+        </div>
+
+    );
+}
+
+function Repo(props: object) {
+    return (
+        <div className={styles.lineItem}>
+                <GitHubIcon className={styles.icons} />
+                <a href={'https://' + props.repo} target='_blank' rel="noopener noreferrer">
+                    {props.repo}
+                </a>
+            </div>
+    );
+}
+
+function Repos(props: object) {
+    return props.repos.map((object, i) => <Repo repo={object['Repository.uri']} key={i} />);
+}
+
+function Monitoring(props: object) {
+    return (
+        <div className={styles.lineItem}>
+            {monitoringIcon(props.type)}
+
+            <a href={'https://' + props.uri} target='_blank' rel="noopener noreferrer">
+                {toTitle(props.type) + ': ' + props.uri}
+            </a>
+        </div>
+    )
+}
+
+function Monitorings(props: object) {
+    return props.mons.map((object, i) => <Monitoring type={object['Monitoring.type']} uri={object['Monitoring.uri']} key={i} />);
 }
 
 export function ServiceComponent(props: object) {
     const svc = props.svc;
 
-    const [service,setService] = useState(<CircularProgress />);
-    const [repo,setRepo] = useState(<CircularProgress />);
-    const [team,setTeam] = useState(<CircularProgress />);
+    const [svcName, setSvcName] = useState();
+    const [repos, setRepos] = useState();
+    const [team, setTeam] = useState();
+    const [monitoring, setMonitoring] = useState();
+    const [infra,setInfra] = useState();
 
     const [err,setErr] = useState();
 
@@ -71,9 +132,11 @@ export function ServiceComponent(props: object) {
 
                 let svc = svcData[0];
 
-                setService(svc);
-                setRepo(<a href={'https://' + svc['Service.hasRepo'][0]['Repository.uri']} target='_blank' rel="noopener noreferrer">{svc['Service.hasRepo'][0]['Repository.uri']}</a>);
-                setTeam(<Link to={"/kaluzagraph/team/" + svc['Service.owner']['Team.name']}>{toTitle(svc['Service.owner']['Team.name'])}</Link>);
+                setSvcName(toTitle(svc['Service.name']));
+                setTeam(<Team team={svc['Service.owner']['Team.name']} />);
+                setRepos(<Repos repos={svc['Service.hasRepo']} />);
+                setMonitoring(<Monitorings mons={svc['Service.hasMonitoring']} />);
+                setInfra(<Relationships svc={svc} />);
             })
             .catch(error => {
                 console.log(error);
@@ -89,24 +152,43 @@ export function ServiceComponent(props: object) {
                 <HeaderLabel label="Lifecycle" value="Alpha" />
             </Header>
             <Content>
-                <ContentHeader title={'Service: ' + toTitle(service['Service.name'])}>
-                    <SupportButton>See some bullshit about the {toTitle(service['Service.name'])} service</SupportButton>
+                <ContentHeader title={svcName}>
+                    <SupportButton>See some bullshit about the {svcName} service</SupportButton>
                 </ContentHeader>
-                <Grid container spacing={3} direction="column">
-                    <Grid item >
-                        <Typography variant='body1'>
-                            <p>
-                                Repo: {repo}
-                            </p>
+                <Grid container spacing={0}>
+                    <Grid item xs={12}>
+                        <p>
+                            The such and such service is a thing written in a language and deployed via some method.
+                        </p>
+                        <p>
+                            TODO: load this information from dgraph.
+                        </p>
 
-                            <p>
-                                Owner: {team}
-                            </p>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <h3>
+                            Details
+                        </h3>
 
-                            <pre>
-                                {toStr(service)}
-                            </pre>
-                        </Typography>
+                        {team}
+                        {repos}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <h3>
+                            Learn More
+                        </h3>
+
+                        {monitoring}
+                    </Grid>
+
+
+                    <Grid item xs={12} >
+                        <h3>
+                            Relationships
+                        </h3>
+
+                        {infra}
                     </Grid>
 
                     <Grid item>

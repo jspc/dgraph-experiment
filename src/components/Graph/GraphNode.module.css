@@ -1,0 +1,14 @@
+.icon {
+    font-size: 1.5em;
+}
+
+.root {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.non-root {}
+
+.node {
+    border: 1px solid #000000;
+}

@@ -1,0 +1,16 @@
+.icons {
+    margin: 10px;
+    height: 1.5em !important;
+    width: 1.5em !important;
+}
+
+.lineItem {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.lineItem a:hover {
+    color: #ffffff;
+    background-color: #000000;
+}
