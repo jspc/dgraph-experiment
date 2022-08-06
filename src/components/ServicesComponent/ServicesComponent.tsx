@@ -18,6 +18,7 @@ import {
 } from '@backstage/core-components';
 
 import { Link } from 'react-router-dom';
+import Moment from 'react-moment';
 
 import {
     GetServices,
@@ -52,7 +53,13 @@ function ServiceTable(props: object) {
             ),
         },
         { title: 'Version', field: 'Service.version' },
-        { title: 'Last Deployed', field: 'Service.date' },
+        {
+            title: 'Last Deployed',
+            field: 'Service.date',
+            render: (row: Partial<TableData>) => (
+                <Moment unix>{row['Service.date']}</Moment>
+            ),
+        },
     ];
 
     return (
