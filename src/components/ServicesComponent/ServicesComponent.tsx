@@ -47,7 +47,7 @@ function ServiceTable(props: object) {
             field: 'Service.owner',
             render: (row: Partial<TableData>) => (
                 <>
-                    <Link to={"/kaluzagraph/team/" + row['Service.name']['Team.name']}>{row['Service.name']['Team.name']}</Link>
+                    <Link to={"/kaluzagraph/team/" + row['Service.owner']['Team.name']}>{row['Service.owner']['Team.name']}</Link>
                     <Typography variant="body2">{row.hash}</Typography>
                 </>
             ),
