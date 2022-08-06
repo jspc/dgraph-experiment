@@ -75,7 +75,7 @@ export function ServicesComponent(props: object) {
                 break;
 
             case 'team':
-            return <TeamComponent team={route[3]} />;
+                return <TeamComponent team={route[3]} />;
                 break;
         }
     }
