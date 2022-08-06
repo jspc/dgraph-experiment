@@ -18,7 +18,9 @@ const queries = {
     services: `{q(func: has(Service.name)) {
         Service.name
         Service.date
-        Service.owner
+        Service.owner {
+            Team.name
+        }
         Service.version
     }}`,
     service: `query Service($service: string) {
@@ -26,7 +28,9 @@ const queries = {
         Service.name
         Service.date
         Service.version
-        Service.owner
+        Service.owner {
+            Team.name
+        }
 
         Service.hasRepo {
             Repository.uri

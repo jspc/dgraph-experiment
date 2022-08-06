@@ -41,7 +41,16 @@ function ServiceTable(props: object) {
                 </>
             ),
         },
-        { title: 'Owner', field: 'Service.owner' },
+        {
+            title: 'Owner',
+            field: 'Service.owner',
+            render: (row: Partial<TableData>) => (
+                <>
+                    <Link to={"/kaluzagraph/team/" + row['Service.name']['Team.name']}>{row['Service.name']['Team.name']}</Link>
+                    <Typography variant="body2">{row.hash}</Typography>
+                </>
+            ),
+        },
         { title: 'Version', field: 'Service.version' },
         { title: 'Last Deployed', field: 'Service.date' },
     ];
